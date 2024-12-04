@@ -1,0 +1,14 @@
+## Non-convex Functions:
+Rosenbrock Function
+Ackley Function
+Rastrigin function
+Michalewicz function
+Easom function
+Booth function
+Himmelblau's function
+Lévi function N.13
+Schaffer function N.2
+Shekel function
+
+## Real-World Testing:
+Cifar-10 Airbench-style
