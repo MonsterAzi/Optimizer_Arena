@@ -8,6 +8,7 @@ from torch.optim.lr_scheduler import LambdaLR
 import math
 from collections import defaultdict
 import tqdm  # Import tqdm for progress bar
+import typer
 
 # Define the custom model
 class Flatten(nn.Module):
@@ -167,22 +168,21 @@ def image_classification_task(optimizer_class, optimizer_config, wandb_project="
     wandb.finish()
 
 
-def main(lr: float = 0.02, wd: float = 0., b1: float = 0.9, b2: float = 0.99):
+def main(lr: float = 0.01):
+    from Optimizers.waaah import C_SGD
     optimizer_config = {
-        "optimizer": optim.AdamW,  # Pass the class, not a string
+        "optimizer": C_SGD,  # Pass the class, not a string
         "hyperparameters": {
-            "lr": lr,
-            "weight_decay": wd,
-            "betas": (b1, b2),
+            "lr": lr
         },
-        "epochs": 1,
+        "epochs": 3,
         "batch_size": 1024,
         "warmup_percentage": 0.05,  # Example customization
         "cooldown_percentage": 0.3
 
     }
     
-    optimization_test_task(optimizer_config["optimizer"], optimizer_config)
+    image_classification_task(optimizer_config["optimizer"], optimizer_config)
 
 if __name__ == "__main__":
     typer.run(main)

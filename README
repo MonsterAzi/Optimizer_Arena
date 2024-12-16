@@ -1,14 +1,17 @@
 ## Non-convex Functions:
-Rosenbrock Function
-Ackley Function
-Rastrigin function
-Michalewicz function
-Easom function
-Booth function
-Himmelblau's function
-Lévi function N.13
-Schaffer function N.2
-Shekel function
+1. Rosenbrock Function
+2. Ackley Function
+3. Rastrigin function
+4. Michalewicz function
+5. Easom function
+6. Booth function
+7. Himmelblau's function
+8. Lévi function N.13
+9. Schaffer function N.2
+10. Shekel function
 
 ## Real-World Testing:
-Cifar-10 Airbench-style
+1. Cifar-10 Airbench-style
+2. Shakespeare SLM
+3. Simo Ryu's Fractal Stream ViT
+4. Simo Ryu's Minimal Rectified Flow

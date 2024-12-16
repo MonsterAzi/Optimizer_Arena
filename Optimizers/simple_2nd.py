@@ -18,11 +18,13 @@ def newton_schulz_orthogonalize(M, steps=7, eps=1e-7):
 
 class SimpleOrthoOptimizer(torch.optim.Optimizer):
     def __init__(self, params, lr=3e-2, momentum=0.95, nesterov=True, ns_steps=6,
-                 adamw_lr=1e-3, adamw_betas=(0.95, 0.95), adamw_eps=1e-8, adamw_wd=0):
+                 adamw_lr=1e-3, adamw_betas=(0.95, 0.95), adamw_eps=1e-8, adamw_wd=0,
+                 min_dim=2):
 
         defaults = dict(lr=lr, momentum=momentum, nesterov=nesterov, ns_steps=ns_steps,
                         adamw_lr=adamw_lr, adamw_betas=adamw_betas,
-                        adamw_eps=adamw_eps, adamw_wd=adamw_wd)
+                        adamw_eps=adamw_eps, adamw_wd=adamw_wd,
+                        min_dim=min_dim)
         super().__init__(params, defaults)
 
     def step(self, closure=None):
@@ -35,17 +37,18 @@ class SimpleOrthoOptimizer(torch.optim.Optimizer):
             lr = group['lr']
             momentum = group['momentum']
             ns_steps = group['ns_steps']
-            adamw_lr = group['adamw_lr']
             beta1, beta2 = group['adamw_betas']
             eps = group['adamw_eps']
             weight_decay = group['adamw_wd']
+            min_dim = group['min_dim']
+            lr_ratio = group['adamw_lr'] / lr
 
             for p in group['params']:
                 g = p.grad
                 if g is None:
                     continue
 
-                if p.ndim >= 2 and p.size(0) < 10000:
+                if p.ndim >= min_dim and p.size(0) < 10000:
                     state = self.state[p]
                     if 'momentum_buffer' not in state:
                         state['momentum_buffer'] = torch.zeros_like(g)
@@ -83,6 +86,6 @@ class SimpleOrthoOptimizer(torch.optim.Optimizer):
                     bias_correction1 = 1 - beta1 ** step
                     bias_correction2 = 1 - beta2 ** step
                     scale = bias_correction1 / bias_correction2 ** 0.5
-                    p.data.mul_(1 - adamw_lr * weight_decay)
-                    p.data.add_(g, alpha=-adamw_lr/scale)
+                    p.data.mul_(1 - lr_ratio * lr * weight_decay)
+                    p.data.add_(g, alpha=-lr_ratio*lr/scale)
         return loss
